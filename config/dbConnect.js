@@ -1,12 +1,18 @@
 import mongoose from "mongoose"
 
-const dbConnect = () => {
-    if(mongoose.connection.readyState > 1){
-        return
+const connection = {};
+
+async function dbConnect(){
+    if(connection.isConnected){
+        console.log("Database is already connected");
+        return;
     }
-    mongoose.connect(process.env.DB_LOCAL_URI, {
-
-    }).then(con => console.log('Connected to local database.'))
-
+    const db = await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    connection.isConnected = db.connections[0].readyState;
+    console.log(connection.isConnected + "connected");
 }
+
 export default dbConnect
